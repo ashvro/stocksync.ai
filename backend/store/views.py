@@ -90,12 +90,50 @@ def _order_summary(orders):
         "top_sellers": [{"sku": k, **v} for k, v in top_sellers],
     }
 
+def _db_inventory_snapshot():
+    return [
+        {
+            "sku_id": f.sku_id,
+            "name": f.name,
+            "category": f.category,
+            "brand": f.brand,
+            "price": f.price,
+            "stock": f.stock,
+            "min_stock": f.min_stock,
+            "sizes": f.sizes,
+            "color": f.color,
+        }
+        for f in Footwear.objects.all().order_by('sku_id')
+    ]
+
+def _db_orders_snapshot(limit=200):
+    return [
+        {
+            "invoice_id": o.invoice_id,
+            "customer_name": o.customer_name,
+            "customer_phone": o.customer_phone,
+            "date": o.date,
+            "payment_method": o.payment_method,
+            "status": o.status,
+            "subtotal": o.subtotal,
+            "discount_amount": o.discount_amount,
+            "total": o.total,
+            "items": [
+                {"id": i.footwear_id, "name": i.name, "price": i.price, "qty": i.qty, "size": i.size}
+                for i in o.items.all()
+            ],
+        }
+        for o in Order.objects.all().order_by('-created_at')[:limit]
+    ]
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def chat(request):
     messages = request.data.get('messages', [])
-    inventory = request.data.get('inventory', [])
-    orders = request.data.get('orders', [])
+    # Source of truth = the database. The client may send stale localStorage
+    # snapshots, so when the backend is reachable we always answer from live DB rows.
+    inventory = _db_inventory_snapshot()
+    orders = _db_orders_snapshot()
 
     normalized_orders = _normalize_orders(orders)
 
