@@ -85,7 +85,6 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
       <section style={{
         ...S.card,
         position:'relative', overflow:'hidden',
-        padding:'clamp(48px,7vw,96px) clamp(20px,5vw,64px)',
         marginBottom:24,
       }}>
         {/* BG diagonal stripe — subtle theme shading */}
@@ -95,36 +94,41 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
           borderLeft:'1px solid #1A1A1A', pointerEvents:'none',
         }} />
 
-        {/* Centered column — video on top, headline below, same width */}
+        {/* Full-width video — flush to the card's top and side edges */}
         <div style={{ position:'relative', zIndex:2 }}>
-          <div style={{ maxWidth:820, margin:'0 auto', textAlign:'center' }}>
+          <div style={{
+            position:'relative', overflow:'hidden',
+            borderTopLeftRadius:6, borderTopRightRadius:6,
+            borderBottom:'1px solid #1A1A1A',
+            background:'#0D0D0D', aspectRatio:'16/9',
+            boxShadow:'0 30px 70px -35px rgba(255,69,0,0.35)',
+          }}>
+            <HeroReel />
             <div style={{
-              position:'relative', overflow:'hidden', borderRadius:6,
-              border:'1px solid #1A1A1A', background:'#0D0D0D',
-              aspectRatio:'16/9',
-              boxShadow:'0 30px 70px -35px rgba(255,69,0,0.35)',
-            }}>
-              <HeroReel />
-              <div style={{
-                position:'absolute', inset:0, pointerEvents:'none',
-                background:'linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.6) 100%)',
-              }} />
-              <div style={{ position:'absolute', left:14, bottom:12, display:'flex', alignItems:'center', gap:8 }}>
-                <span className="tag tag-orange">RUN IN MOTION</span>
-                <span className="tag tag-muted">A.S FOOTWEAR</span>
-              </div>
+              position:'absolute', inset:0, pointerEvents:'none',
+              background:'linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.6) 100%)',
+            }} />
+            <div style={{ position:'absolute', left:14, bottom:12, display:'flex', alignItems:'center', gap:8 }}>
+              <span className="tag tag-orange">RUN IN MOTION</span>
+              <span className="tag tag-muted">A.S FOOTWEAR</span>
             </div>
-
-            <h1 style={{
-              fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900,
-              fontSize:'clamp(3rem,7.5vw,6.5rem)', textTransform:'uppercase',
-              lineHeight:0.88, letterSpacing:'-0.01em', color:'#F0F0F0',
-              marginTop:'clamp(28px,4vw,44px)',
-            }}>
-              Crafted for<br />
-              <span style={{ color:'#FF4500' }}>the Street.</span>
-            </h1>
           </div>
+        </div>
+
+        {/* Headline below — unchanged */}
+        <div style={{
+          position:'relative', zIndex:2,
+          padding:'clamp(36px,6vw,64px) clamp(20px,5vw,64px)',
+          textAlign:'center',
+        }}>
+          <h1 style={{
+            fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900,
+            fontSize:'clamp(3rem,7.5vw,6.5rem)', textTransform:'uppercase',
+            lineHeight:0.88, letterSpacing:'-0.01em', color:'#F0F0F0',
+          }}>
+            Crafted for<br />
+            <span style={{ color:'#FF4500' }}>the Street.</span>
+          </h1>
         </div>
       </section>
 
