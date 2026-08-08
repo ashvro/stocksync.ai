@@ -62,7 +62,7 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
           letterSpacing:'-0.02em',
         }}>FOOTWEAR</div>
 
-        <div style={{ display:'grid', gridTemplateColumns:'1.15fr 0.85fr', gap:48, position:'relative', zIndex:2, alignItems:'center' }}
+        <div style={{ display:'grid', gridTemplateColumns:'1.15fr 0.85fr', gap:48, position:'relative', zIndex:2, alignItems:'stretch' }}
           className="hero-grid">
           {/* Left */}
           <div style={{ maxWidth:620 }}>
@@ -99,11 +99,11 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
           </div>
 
           {/* Right — auto-playing hero reel (ad-style, no controls) */}
-          <div className="hero-media" style={{ position:'relative' }}>
+          <div className="hero-media" style={{ position:'relative', height:'100%' }}>
             <div style={{
               position:'relative', overflow:'hidden', borderRadius:6,
               border:'1px solid #1A1A1A', background:'#0D0D0D',
-              aspectRatio:'16/10',
+              height:'100%', minHeight:360,
               boxShadow:'0 30px 70px -35px rgba(255,69,0,0.35)',
             }}>
               <video
@@ -315,6 +315,8 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
       <style>{`
         @media (max-width:900px) {
           .hero-grid     { grid-template-columns: 1fr !important; }
+          .hero-media    { height: auto !important; }
+          .hero-media > div { min-height: 0 !important; aspect-ratio: 16/10 !important; }
           .hero-card     { max-width: 100% !important; }
           .pillars-grid  { grid-template-columns: 1fr 1fr !important; }
           .catalogue-grid{ grid-template-columns: 1fr 1fr !important; }
