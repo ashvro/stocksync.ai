@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  ArrowRight,
   ChevronRight, Eye, X, Phone, Mail, MapPin, Clock, Send, Check, Zap
 } from 'lucide-react';
 
@@ -86,78 +85,47 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
       <section style={{
         ...S.card,
         position:'relative', overflow:'hidden',
-        padding:'clamp(28px,5vw,64px)',
+        padding:'clamp(48px,7vw,96px) 0 0',
         marginBottom:24,
       }}>
-        {/* BG diagonal stripe */}
+        {/* BG diagonal stripe — subtle theme shading */}
         <div style={{
           position:'absolute', top:0, right:0, width:'45%', height:'100%',
           background:'linear-gradient(135deg, transparent 0%, rgba(255,69,0,0.04) 100%)',
           borderLeft:'1px solid #1A1A1A', pointerEvents:'none',
         }} />
-        {/* Big background text */}
+
+        {/* Headline only */}
         <div style={{
-          position:'absolute', bottom: -10, left:16,
-          fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900,
-          fontSize:'clamp(5rem,12vw,10rem)', textTransform:'uppercase',
-          color:'transparent', WebkitTextStroke:'1px rgba(255,255,255,0.04)',
-          lineHeight:1, userSelect:'none', pointerEvents:'none',
-          letterSpacing:'-0.02em',
-        }}>FOOTWEAR</div>
+          position:'relative', zIndex:2, textAlign:'center',
+          padding:'0 clamp(20px,5vw,64px)',
+        }}>
+          <h1 style={{
+            fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900,
+            fontSize:'clamp(3.4rem,10vw,8rem)', textTransform:'uppercase',
+            lineHeight:0.88, letterSpacing:'-0.01em', color:'#F0F0F0',
+          }}>
+            Crafted for<br />
+            <span style={{ color:'#FF4500' }}>the Street.</span>
+          </h1>
+        </div>
 
-        <div style={{ display:'grid', gridTemplateColumns:'1.15fr 0.85fr', gap:48, position:'relative', zIndex:2, alignItems:'stretch' }}
-          className="hero-grid">
-          {/* Left */}
-          <div style={{ maxWidth:620 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:20 }}>
-              <span className="tag tag-orange">A.S FOOTWEAR</span>
-              <span className="tag tag-muted">SS 2025 COLLECTION</span>
-            </div>
-
-            <h1 style={{
-              fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900,
-              fontSize:'clamp(3rem,8vw,6.5rem)', textTransform:'uppercase',
-              lineHeight:0.88, letterSpacing:'-0.01em', color:'#F0F0F0',
-              marginBottom:20,
-            }}>
-              Crafted for<br />
-              <span style={{ color:'#FF4500' }}>the Street.</span>
-            </h1>
-
-            <p style={{ color:'#666', fontSize:'0.875rem', lineHeight:1.7, maxWidth:420, marginBottom:28 }}>
-              Heritage leather artistry meets precision street performance. Discover our curated catalogue and issue POS invoices directly.
-            </p>
-
-            <div style={{ display:'flex', flexWrap:'wrap', gap:10, marginBottom:36 }}>
-              <button className="btn-primary" onClick={isAdmin ? () => setActiveTab('inventory') : () => document.getElementById('catalogue')?.scrollIntoView({ behavior:'smooth' })}>
-                Browse Inventory
-                <ArrowRight style={{width:14,height:14}} />
-              </button>
-              {isAdmin && (
-                <button className="btn-ghost" onClick={() => setActiveTab('invoice')}>
-                  Issue POS Invoice
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Right — auto-playing hero reel (ad-style, no controls) */}
-          <div className="hero-media" style={{ position:'relative', height:'100%' }}>
+        {/* Wide rectangular reel — covers most of the hero width */}
+        <div style={{ position:'relative', zIndex:2, marginTop:'clamp(36px,6vw,64px)' }}>
+          <div style={{
+            position:'relative', overflow:'hidden', borderRadius:'0 0 6px 6px',
+            border:'1px solid #1A1A1A', background:'#0D0D0D',
+            aspectRatio:'16/9',
+            boxShadow:'0 30px 70px -35px rgba(255,69,0,0.35)',
+          }}>
+            <HeroReel />
             <div style={{
-              position:'relative', overflow:'hidden', borderRadius:6,
-              border:'1px solid #1A1A1A', background:'#0D0D0D',
-              height:'100%', minHeight:360,
-              boxShadow:'0 30px 70px -35px rgba(255,69,0,0.35)',
-            }}>
-              <HeroReel />
-              <div style={{
-                position:'absolute', inset:0, pointerEvents:'none',
-                background:'linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.6) 100%)',
-              }} />
-              <div style={{ position:'absolute', left:14, bottom:12, display:'flex', alignItems:'center', gap:8 }}>
-                <span className="tag tag-orange">RUN IN MOTION</span>
-                <span className="tag tag-muted">A.S FOOTWEAR</span>
-              </div>
+              position:'absolute', inset:0, pointerEvents:'none',
+              background:'linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.6) 100%)',
+            }} />
+            <div style={{ position:'absolute', left:14, bottom:12, display:'flex', alignItems:'center', gap:8 }}>
+              <span className="tag tag-orange">RUN IN MOTION</span>
+              <span className="tag tag-muted">A.S FOOTWEAR</span>
             </div>
           </div>
         </div>
@@ -352,10 +320,6 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
       {/* ── Responsive grid overrides ── */}
       <style>{`
         @media (max-width:900px) {
-          .hero-grid     { grid-template-columns: 1fr !important; }
-          .hero-media    { height: auto !important; }
-          .hero-media > div { min-height: 0 !important; aspect-ratio: 16/10 !important; }
-          .hero-card     { max-width: 100% !important; }
           .pillars-grid  { grid-template-columns: 1fr 1fr !important; }
           .catalogue-grid{ grid-template-columns: 1fr 1fr !important; }
           .contact-grid  { grid-template-columns: 1fr !important; }
