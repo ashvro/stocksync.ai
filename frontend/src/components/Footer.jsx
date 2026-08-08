@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Footprints, MapPin, Phone, Mail, Clock,
-  Instagram, Facebook, Twitter, ShieldCheck, Truck, RotateCcw, Send, Lock, LogIn
+  Instagram, Facebook, Twitter, ShieldCheck, Lock, LogIn
 } from 'lucide-react';
 import { STORE_INFO } from '../data/mockData';
 
@@ -13,30 +13,9 @@ export default function Footer({ setActiveTab, isAdmin, onOpenSignIn }) {
   return (
     <footer style={{ background:'#0D0D0D', borderTop:'1px solid #1A1A1A', color:'#666' }}>
 
-      {/* Top value props */}
-      <div style={{ borderBottom:'1px solid #1A1A1A', padding:'32px 0' }}>
-        <div style={{ maxWidth:1280, margin:'0 auto', padding:'0 24px', display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }} className="footer-props-grid">
-          {[
-            { icon:ShieldCheck, label:'100% Authentic',         desc:'Handpicked premium leather & genuine footwear brands.', accent:'#FF4500' },
-            { icon:Truck,       label:'Express Nationwide',     desc:'Fast delivery with real-time package tracking.',        accent:'#FF4500' },
-            { icon:RotateCcw,   label:'30-Day Exchange',        desc:'Hassle-free size replacement & trial in-store.',        accent:'#FF4500' },
-          ].map(({ icon:Icon, label, desc, accent }) => (
-            <div key={label} style={{ display:'flex', alignItems:'center', gap:16, background:'#111', border:'1px solid #1A1A1A', borderRadius:6, padding:18 }}>
-              <div style={{ width:40, height:40, borderRadius:4, background:'rgba(255,69,0,0.1)', border:'1px solid rgba(255,69,0,0.2)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                <Icon style={{ width:18, height:18, color:accent }} />
-              </div>
-              <div>
-                <h4 style={{ color:'#F0F0F0', fontWeight:700, fontSize:'0.8rem', textTransform:'uppercase', letterSpacing:'0.04em', marginBottom:3 }}>{label}</h4>
-                <p style={{ fontSize:'0.72rem', lineHeight:1.5 }}>{desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Main footer body */}
       <div style={{ maxWidth:1280, margin:'0 auto', padding:'48px 24px' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'1.5fr 1fr 1fr 1fr', gap:40 }} className="footer-grid">
+        <div style={{ display:'grid', gridTemplateColumns:'1.5fr 1fr 1fr', gap:40 }} className="footer-grid">
 
           {/* Brand */}
           <div>
@@ -107,27 +86,6 @@ export default function Footer({ setActiveTab, isAdmin, onOpenSignIn }) {
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div>
-            <h3 style={{ ...S.label, color:'#FF4500', marginBottom:16, paddingBottom:8, borderBottom:'1px solid #1A1A1A' }}>Stay Updated</h3>
-            <p style={{ fontSize:'0.73rem', lineHeight:1.6, marginBottom:14 }}>
-              Subscribe for limited drops, seasonal clearouts, and store news.
-            </p>
-            <form onSubmit={e => { e.preventDefault(); alert('Subscribed!'); }} style={{ position:'relative' }}>
-              <input
-                type="email" required placeholder="your@email.com"
-                style={{ width:'100%', padding:'9px 44px 9px 12px', fontSize:'0.73rem', borderRadius:3, background:'#111', border:'1px solid #252525', color:'#F0F0F0', fontFamily:"'Space Grotesk', sans-serif" }}
-              />
-              <button
-                type="submit"
-                style={{ position:'absolute', right:4, top:'50%', transform:'translateY(-50%)', background:'#FF4500', border:'none', borderRadius:2, padding:6, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}
-              >
-                <Send style={{ width:13, height:13, color:'#fff' }} />
-              </button>
-            </form>
-            <p style={{ fontSize:'0.62rem', marginTop:8, color:'#444' }}>We respect your privacy. Unsubscribe anytime.</p>
           </div>
         </div>
 

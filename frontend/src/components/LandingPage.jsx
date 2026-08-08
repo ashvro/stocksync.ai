@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import {
-  ArrowRight, ShieldCheck, Truck, RefreshCw, Award,
+  ArrowRight,
   ChevronRight, Eye, X, Phone, Mail, MapPin, Clock, Send, Check, Zap
 } from 'lucide-react';
 import { STORE_INFO } from '../data/mockData';
-import Shoe3D from './Shoe3D';
 
 /* ────────────────────────────────────────────────────────────
    LANDING PAGE — Street Fashion Aesthetic
@@ -110,28 +109,14 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
                 </button>
               )}
             </div>
-
-            {/* Metrics */}
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:20, borderTop:'1px solid #1A1A1A', paddingTop:24, maxWidth:380 }}>
-              {[
-                { val:'1,500+', label:'Pairs Delivered' },
-                { val:'100%', label:'Genuine Leather' },
-                { val:'4.9 ★', label:'Store Rating', accent:true },
-              ].map(m => (
-                <div key={m.label}>
-                  <p style={{ fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900, fontSize:'1.8rem', color: m.accent ? '#FF4500' : '#F0F0F0', lineHeight:1 }}>{m.val}</p>
-                  <p style={{ fontSize:'0.65rem', color:'#555', textTransform:'uppercase', letterSpacing:'0.06em', marginTop:4 }}>{m.label}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Right — 3D animated shoe stage */}
+          {/* Right — animated shoe stage */}
           <div className="shoe-stage" style={{ display:'flex', alignItems:'center', justifyContent:'center' }}>
             <div className="shoe-glow" />
             <div className="shoe-halo" />
             <div className="shoe-3d">
-              <Shoe3D fallbackImage={HERO_SHOE.image} fallbackAlt={HERO_SHOE.name} />
+              <img src={HERO_SHOE.image} alt={HERO_SHOE.name} style={{ width:'100%', height:'100%', objectFit:'contain' }} />
             </div>
             <span className="shoe-spark shoe-spark-1" />
             <span className="shoe-spark shoe-spark-2" />
@@ -140,29 +125,6 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
             <span className="shoe-spark shoe-spark-5" />
           </div>
         </div>
-      </section>
-
-
-      {/* ════ BRAND PILLARS ════ */}
-      <section style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:12, marginBottom:24 }} className="pillars-grid">
-        {[
-          { icon: ShieldCheck, title:'Authentic Guarantee', desc:'Handpicked premium full-grain leathers and genuine brand footwear.' },
-          { icon: Truck,       title:'Nationwide Express',  desc:'Rapid nationwide dispatch with end-to-end order tracking.' },
-          { icon: RefreshCw,   title:'30-Day Fit Guarantee',desc:'Hassle-free size replacement and complimentary in-store trials.' },
-          { icon: Award,       title:'Goodyear Welted',     desc:'Built with re-soleable craftsmanship for multi-year durability.' },
-        ].map(({ icon: Icon, title, desc }) => (
-          <div key={title} style={{ ...S.card, padding:20 }} className="card-hover">
-            <div style={{
-              width:36, height:36, borderRadius:4,
-              background:'rgba(255,69,0,0.1)', border:'1px solid rgba(255,69,0,0.2)',
-              display:'flex', alignItems:'center', justifyContent:'center', marginBottom:14,
-            }}>
-              <Icon style={{ width:17, height:17, color:'#FF4500' }} />
-            </div>
-            <h4 style={{ fontFamily:"'Space Grotesk', sans-serif", fontWeight:700, fontSize:'0.82rem', color:'#F0F0F0', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.03em' }}>{title}</h4>
-            <p style={{ color:'#555', fontSize:'0.75rem', lineHeight:1.55 }}>{desc}</p>
-          </div>
-        ))}
       </section>
 
 
@@ -229,28 +191,6 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-
-      {/* ════ MATERIAL SPECS ════ */}
-      <section style={{ ...S.card, padding:'clamp(24px,4vw,48px)', marginBottom:24 }}>
-        <div style={{ borderBottom:'1px solid #1A1A1A', paddingBottom:16, marginBottom:24 }}>
-          <span style={S.label}>// QUALITY BENCHMARK</span>
-          <h2 style={{ ...S.sectionTitle, marginTop:8, fontSize:'2rem' }}>Footwear Specifications</h2>
-        </div>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }} className="specs-grid">
-          {[
-            { title:'Full-Grain Italian Leather', desc:'Grade-A vegetable-tanned leather from Tuscan tanneries, developing a rich patina over time.' },
-            { title:'Air-Foam Cushioning', desc:'Multi-density EVA midsoles engineered to absorb foot strike pressure for long daily wear.' },
-            { title:'Goodyear Welt Construction', desc:'Precision lock-stitch perimeter welt binding upper to sole for maximum moisture resistance.' },
-          ].map(s => (
-            <div key={s.title} style={{ background:'#0D0D0D', border:'1px solid #1A1A1A', borderRadius:4, padding:20 }}>
-              <div style={{ width:8, height:8, borderRadius:0, background:'#FF4500', marginBottom:12 }} />
-              <h4 style={{ fontWeight:700, color:'#F0F0F0', fontSize:'0.82rem', marginBottom:8, textTransform:'uppercase', letterSpacing:'0.04em' }}>{s.title}</h4>
-              <p style={{ color:'#555', fontSize:'0.75rem', lineHeight:1.6 }}>{s.desc}</p>
             </div>
           ))}
         </div>
