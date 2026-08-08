@@ -48,8 +48,12 @@ const persistData = (inventory, orders) => {
   try {
     localStorage.setItem(STORAGE_KEYS.inventory, JSON.stringify(inventory));
     localStorage.setItem(STORAGE_KEYS.orders, JSON.stringify(orders));
+    return true;
   } catch (e) {
-    console.error('Failed to save local data:', e);
+    // Base64 shoe images can overflow the ~5MB localStorage quota. The data
+    // still lives in memory and on the backend, so this is non-fatal.
+    console.error('Failed to save local data (localStorage may be full):', e);
+    return false;
   }
 };
 
@@ -164,10 +168,25 @@ export default function App() {
   // Alert Count Calculation
   const alertCount = inventory.filter(i => i.stock <= i.minStock).length;
 
+  // Push the current in-memory store to the backend so every device sees the
+  // same data. Reconciles the freshly-built `next` state instead of re-reading
+  // localStorage, which can be stale if a large base64 image overflowed its
+  // quota before the persist effect ran.
+  const syncWithBackend = async (nextInventory, nextOrders) => {
+    try {
+      await reconcileWithBackend(nextInventory, nextOrders);
+      return true;
+    } catch (e) {
+      console.error("Failed to sync with Django DBMS:", e);
+      return false;
+    }
+  };
+
   // Handlers for Inventory CRUD with Django DBMS integration
   const handleAddShoe = async (newShoe) => {
     // 1. Optimistic state update
-    setInventory(prev => [newShoe, ...prev]);
+    const next = [newShoe, ...inventory];
+    setInventory(next);
 
     // 2. Persist in Django DBMS database
     try {
@@ -178,36 +197,46 @@ export default function App() {
       const payload = { ...newShoe, sku_id: sku };
       delete payload.id;
       await createFootwear(payload);
-      await loadDataFromBackend();
     } catch (e) {
       console.error("Failed to add shoe to Django DBMS:", e);
     }
+
+    // 3. Flush to localStorage now, then reconcile the in-memory state (which
+    // includes any freshly uploaded image) to the backend.
+    persistData(next, orderHistory);
+    await syncWithBackend(next, orderHistory);
   };
 
   const handleUpdateShoe = async (updatedShoe) => {
-    setInventory(prev => prev.map(item => item.id === updatedShoe.id || item.sku_id === updatedShoe.sku_id ? updatedShoe : item));
+    const next = inventory.map(item => item.id === updatedShoe.id || item.sku_id === updatedShoe.sku_id ? updatedShoe : item);
+    setInventory(next);
 
     try {
       const sku = updatedShoe.sku_id || updatedShoe.id;
       const payload = { ...updatedShoe, sku_id: sku };
       delete payload.id;
       await updateFootwear(sku, payload);
-      await loadDataFromBackend();
     } catch (e) {
       console.error("Failed to update shoe in Django DBMS:", e);
     }
+
+    persistData(next, orderHistory);
+    await syncWithBackend(next, orderHistory);
   };
 
   const handleDeleteShoe = async (shoeId) => {
     if (window.confirm("Are you sure you want to delete this footwear SKU from Django database?")) {
-      setInventory(prev => prev.filter(item => item.id !== shoeId && item.sku_id !== shoeId));
+      const next = inventory.filter(item => item.id !== shoeId && item.sku_id !== shoeId);
+      setInventory(next);
 
       try {
         await deleteFootwear(shoeId);
-        await loadDataFromBackend();
       } catch (e) {
         console.error("Failed to delete shoe from Django DBMS:", e);
       }
+
+      persistData(next, orderHistory);
+      await syncWithBackend(next, orderHistory);
     }
   };
 
