@@ -4,14 +4,6 @@ import {
 } from 'lucide-react';
 import { sendChatMessage } from '../services/chat';
 
-const SUGGESTIONS = [
-  'Which items are low on stock?',
-  'What is the price of Air Stealth?',
-  'How much revenue have we made?',
-  'Show me the recent invoices',
-  'Give me a restock priority list',
-];
-
 const S = {
   label: { fontFamily:"'Space Mono', monospace", fontSize:'0.6rem', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'#FF6A35' },
   card: { background:'#111', border:'1px solid #1A1A1A', borderRadius:6 },
@@ -152,27 +144,6 @@ export default function ASbot({ inventory, orderHistory }) {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Quick suggestions */}
-          <div style={{ display:'flex', flexWrap:'wrap', gap:8, margin:'18px 0 14px' }}>
-            {SUGGESTIONS.map(s => (
-              <button
-                key={s}
-                onClick={() => send(s)}
-                disabled={busy}
-                style={{
-                  padding:'7px 12px', borderRadius:3, cursor:'pointer',
-                  background:'#111', border:'1px solid #252525', color:'#888',
-                  fontFamily:"'Space Grotesk', sans-serif", fontSize:'0.72rem',
-                  transition:'all 0.15s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.color='#F0F0F0'; e.currentTarget.style.borderColor='rgba(255,69,0,0.4)'; }}
-                onMouseLeave={e => { e.currentTarget.style.color='#888'; e.currentTarget.style.borderColor='#252525'; }}
-              >
-                {s}
-              </button>
-            ))}
           </div>
 
           {/* Input */}
