@@ -59,12 +59,11 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
           >
             <div style={{
               width:40, height:40, borderRadius:4, overflow:'hidden',
-              background:'#111', border:'1px solid #252525',
+              background:'#111', border:'1px solid #1A1A1A',
               display:'flex', alignItems:'center', justifyContent:'center',
-              boxShadow:'0 0 20px -4px rgba(255,69,0,0.5)',
               flexShrink:0,
             }}>
-              <img src="/aslogo.jpeg" alt="A.S Footwear logo" style={{ width:40, height:40, objectFit:'cover', display:'block' }} />
+              <img src="/aslogo.jpeg" alt="A.S Footwear logo" style={{ width:'100%', height:'100%', objectFit:'contain', display:'block' }} />
             </div>
             <div style={{ textAlign:'left', flexShrink:0 }}>
               <div style={{
@@ -84,7 +83,7 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
           </button>
 
           {/* Desktop nav */}
-          <nav style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:2, flex:1, minWidth:0, overflowX:'auto', overflowY:'hidden', scrollbarWidth:'none', msOverflowStyle:'none' }} className="hidden-mobile header-nav">
+          <nav style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:4, flex:1, minWidth:0, overflowX:'auto', overflowY:'hidden', scrollbarWidth:'none', msOverflowStyle:'none' }} className="hidden-mobile header-nav">
             {visibleTabs.map(tab => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
@@ -93,12 +92,12 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   style={{
-                    position:'relative', display:'flex', alignItems:'center', gap:6,
-                    padding:'7px 12px', borderRadius:3, border:'none', cursor:'pointer',
+                    position:'relative', display:'flex', alignItems:'center', gap:5,
+                    padding:'7px 10px', borderRadius:3, border:'none', cursor:'pointer',
                     fontFamily:"'Space Grotesk', sans-serif",
                     fontWeight: active ? 700 : 500,
-                    fontSize:'0.74rem',
-                    letterSpacing:'0.04em', textTransform:'uppercase',
+                    fontSize:'0.72rem',
+                    letterSpacing:'0.03em', textTransform:'uppercase',
                     background: active ? '#FF4500' : 'transparent',
                     color: active ? '#fff' : '#888',
                     transition:'all 0.15s',
@@ -160,10 +159,10 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
                 <button
                   onClick={onLogout}
                   className="btn-ghost"
-                  style={{ padding:'8px 12px', display:'flex', alignItems:'center', gap:6 }}
+                  style={{ padding:'8px 12px', display:'flex', alignItems:'center', gap:6, flexShrink:0, whiteSpace:'nowrap' }}
                   title="Sign out"
                 >
-                  <LogOut style={{ width:13, height:13 }} />
+                  <LogOut style={{ width:13, height:13, flexShrink:0 }} />
                   <span className="hidden-mobile">Sign Out</span>
                 </button>
               </>
@@ -232,7 +231,7 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
       <style>{`
         .header-nav::-webkit-scrollbar { display: none; }
 
-        @media (max-width: 1220px) {
+        @media (max-width: 1280px) {
           .header-search  { display: none !important; }
           .header-subtitle { display: none !important; }
         }
