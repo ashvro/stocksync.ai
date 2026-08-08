@@ -150,21 +150,69 @@ Mutating requests must send `Authorization: Bearer <token>`, obtained from `/api
 
 ## 🌐 Deployment
 
-### 1. Backend → Render (free)
+### 1. Backend → PythonAnywhere (free, permanent — recommended)
 
-1. Push this repo to GitHub (done). Open [render.com](https://render.com) → **New → Blueprint** → connect the repo → Render auto-detects `backend/render.yaml`.
-2. In the **Environment** tab of the new service set `GROQ_API_KEY` to your key from [console.groq.com](https://console.groq.com), and change `ADMIN_PASSWORD`.
-3. Deploy. Your API URL will be like `https://asfootwear-api.onrender.com/api` (confirm under **Settings → Domains**).
-   - The free tier sleeps when idle — the first request after sleep takes ~30s.
+PythonAnywhere is the best **free + permanent** home for this app: web apps stay up 24/7 (no idle spin-down), and the SQLite file persists — no ephemeral-filesystem data loss like on Render's free tier.
 
-> **Alternative (PythonAnywhere):** create a web app → set `backend/.env` vars (`DJANGO_DEBUG=False`), run `migrate` + `seed_data`, then set the WSGI handler to `backend.wsgi.application`.
+1. **Create an account** at [pythonanywhere.com](https://www.pythonanywhere.com) (free). Your site URL is `https://<username>.pythonanywhere.com`.
+2. **Web tab → Add a new web app → Manual configuration → Python 3.12.** Leave defaults; you'll edit the WSGI file next.
+3. **Consoles tab → Bash**, then upload the code and install:
+
+   ```bash
+   cd ~
+   git clone https://github.com/<your-github>/ASfootwear.git
+   cd ASfootwear/backend
+   python3.12 -m venv venv
+   source venv/bin/activate
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+
+4. Create `backend/.env` with production values (the app auto-reads it):
+
+   ```env
+   DJANGO_SECRET_KEY=<long-random-string>
+   DJANGO_DEBUG=False
+   DJANGO_ALLOWED_HOSTS=your-username.pythonanywhere.com
+   ADMIN_PASSWORD=<strong-password>
+   GROQ_API_KEY=gsk_your_key_here
+   GROQ_MODEL=llama-3.3-70b-versatile
+   ```
+
+5. **Web tab → Code → WSGI configuration file** — replace the contents with:
+
+   ```python
+   import os, sys
+   project = '/home/<username>/ASfootwear/backend'
+   if project not in sys.path:
+       sys.path.insert(0, project)
+   os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+   from django.core.wsgi import get_wsgi_application
+   application = get_wsgi_application()
+   ```
+
+   Then under **Virtualenv** enter `/home/<username>/ASfootwear/backend/venv`.
+
+6. **Static files** (for Django admin assets): add a mapping **URL** `/static/` → **Directory** `/home/<username>/ASfootwear/backend/staticfiles/`.
+7. Back in the Bash console, migrate + seed + collect static:
+
+   ```bash
+   source venv/bin/activate
+   python manage.py migrate
+   python manage.py seed_data
+   python manage.py collectstatic --noinput
+   ```
+
+8. **Web tab → Reload**. Your API is live at `https://<username>.pythonanywhere.com/api` with HTTPS (enable **Force HTTPS** under the HTTPS section).
+
+> **Alternative (Render free):** Render auto-detects `backend/render.yaml` (New → Blueprint). Note the free tier **sleeps when idle** and its filesystem is ephemeral — SQLite data is lost on restart, so it's only suitable for demos.
 
 ### 2. Frontend → Netlify (already deployed)
 
 1. In the Netlify site **Site configuration → Environment variables**, add:
 
    ```
-   VITE_API_URL=https://<your-render-url>.onrender.com/api
+   VITE_API_URL=https://<username>.pythonanywhere.com/api
    ```
 
 2. Trigger a redeploy (**Deploys → Trigger deploy → Clear cache and deploy site**). The new value is baked into the build.
@@ -176,7 +224,7 @@ Mutating requests must send `Authorization: Bearer <token>`, obtained from `/api
 
 ### Domain
 
-- Point a custom domain (e.g. `.in` via BigRock / GoDaddy / Hostinger) at Netlify; set `DJANGO_ALLOWED_HOSTS` to your Render domain if you use one.
+- Point a custom domain (e.g. `.in` via BigRock / GoDaddy / Hostinger) at Netlify; set `DJANGO_ALLOWED_HOSTS` to your API domain (`<username>.pythonanywhere.com`).
 
 ## 📄 License
 
