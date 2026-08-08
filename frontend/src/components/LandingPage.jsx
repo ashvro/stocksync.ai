@@ -62,7 +62,7 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
           letterSpacing:'-0.02em',
         }}>FOOTWEAR</div>
 
-        <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:40, position:'relative', zIndex:2, alignItems:'center' }}
+        <div style={{ display:'grid', gridTemplateColumns:'1.15fr 0.85fr', gap:48, position:'relative', zIndex:2, alignItems:'center' }}
           className="hero-grid">
           {/* Left */}
           <div style={{ maxWidth:620 }}>
@@ -95,6 +95,31 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
                   Issue POS Invoice
                 </button>
               )}
+            </div>
+          </div>
+
+          {/* Right — auto-playing hero reel (ad-style, no controls) */}
+          <div className="hero-media" style={{ position:'relative' }}>
+            <div style={{
+              position:'relative', overflow:'hidden', borderRadius:6,
+              border:'1px solid #1A1A1A', background:'#0D0D0D',
+              aspectRatio:'16/10',
+              boxShadow:'0 30px 70px -35px rgba(255,69,0,0.35)',
+            }}>
+              <video
+                autoPlay muted loop playsInline
+                preload="auto"
+                src="https://assets.mixkit.co/videos/4851/4851-720.mp4"
+                style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
+              />
+              <div style={{
+                position:'absolute', inset:0, pointerEvents:'none',
+                background:'linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.6) 100%)',
+              }} />
+              <div style={{ position:'absolute', left:14, bottom:12, display:'flex', alignItems:'center', gap:8 }}>
+                <span className="tag tag-orange">RUN IN MOTION</span>
+                <span className="tag tag-muted">A.S FOOTWEAR</span>
+              </div>
             </div>
           </div>
         </div>
