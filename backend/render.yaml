@@ -1,0 +1,28 @@
+# Render blueprint — one-click backend deployment.
+# Docs: https://render.com/docs/deploy-an-express-service
+services:
+  - type: web
+    name: asfootwear-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py migrate
+    startCommand: gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    healthCheckPath: /api/inventory/
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "*"
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: changeme
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      # Set your real key in the Render dashboard:
+      #   https://console.groq.com -> API Keys -> gsk_...
+      - key: GROQ_API_KEY
+        sync: false

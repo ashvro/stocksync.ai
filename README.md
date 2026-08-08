@@ -150,9 +150,33 @@ Mutating requests must send `Authorization: Bearer <token>`, obtained from `/api
 
 ## 🌐 Deployment
 
-- **Frontend** → [Netlify](https://www.netlify.com): build command `npm run build` (run inside `frontend/`), publish directory `dist`. Set `VITE_API_URL` to your live API.
-- **Backend** → [PythonAnywhere](https://www.pythonanywhere.com) (free tier works) or any Django host: set all `backend/.env` vars, `DJANGO_DEBUG=False`, run `migrate` + `seed_data`.
-- **Domain** → any registrar (e.g. `.in` via BigRock / GoDaddy / Hostinger), then point DNS at Netlify.
+### 1. Backend → Render (free)
+
+1. Push this repo to GitHub (done). Open [render.com](https://render.com) → **New → Blueprint** → connect the repo → Render auto-detects `backend/render.yaml`.
+2. In the **Environment** tab of the new service set `GROQ_API_KEY` to your key from [console.groq.com](https://console.groq.com), and change `ADMIN_PASSWORD`.
+3. Deploy. Your API URL will be like `https://asfootwear-api.onrender.com/api` (confirm under **Settings → Domains**).
+   - The free tier sleeps when idle — the first request after sleep takes ~30s.
+
+> **Alternative (PythonAnywhere):** create a web app → set `backend/.env` vars (`DJANGO_DEBUG=False`), run `migrate` + `seed_data`, then set the WSGI handler to `backend.wsgi.application`.
+
+### 2. Frontend → Netlify (already deployed)
+
+1. In the Netlify site **Site configuration → Environment variables**, add:
+
+   ```
+   VITE_API_URL=https://<your-render-url>.onrender.com/api
+   ```
+
+2. Trigger a redeploy (**Deploys → Trigger deploy → Clear cache and deploy site**). The new value is baked into the build.
+
+### 3. Verify
+
+- Open the deployed site → admin login → **ASbot** → ask *"how much revenue have we made?"* → the badge should show **GROQ ONLINE**.
+- Test one inventory write (e.g. restock) — the data now syncs to the live Django database instead of only `localStorage`.
+
+### Domain
+
+- Point a custom domain (e.g. `.in` via BigRock / GoDaddy / Hostinger) at Netlify; set `DJANGO_ALLOWED_HOSTS` to your Render domain if you use one.
 
 ## 📄 License
 
