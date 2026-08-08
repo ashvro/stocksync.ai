@@ -141,53 +141,61 @@
   /* ——— Glows ——— */
   .glow-orange { box-shadow: 0 0 20px -4px rgba(255,69,0,0.35); }
 
-  /* ——— 3D Hero Shoe Stage ——— */
-  .shoe-stage {
+  /* ——— Brand Logo Stage ——— */
+  .logo-stage {
     position: relative;
-    perspective: 900px;
     min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: visible;
   }
-  .shoe-glow {
+  .logo-glow {
     position: absolute;
     left: 50%; top: 50%;
-    width: 62%; aspect-ratio: 1;
+    width: 70%; aspect-ratio: 1;
     transform: translate(-50%, -50%);
     background: radial-gradient(circle, rgba(255,69,0,0.30) 0%, rgba(255,69,0,0.08) 45%, transparent 70%);
     filter: blur(4px);
-    animation: shoe-glow-pulse 4s ease-in-out infinite;
+    animation: logo-glow-pulse 4s ease-in-out infinite;
     pointer-events: none;
   }
-  @keyframes shoe-glow-pulse {
+  @keyframes logo-glow-pulse {
     0%,100% { opacity: 0.7; transform: translate(-50%,-50%) scale(1); }
-    50%     { opacity: 1;   transform: translate(-50%,-50%) scale(1.18); }
+    50%     { opacity: 1;   transform: translate(-50%,-50%) scale(1.15); }
   }
-  .shoe-halo {
+  .logo-halo {
     position: absolute;
     left: 50%; top: 50%;
-    width: 94%; aspect-ratio: 1;
+    width: 100%; aspect-ratio: 1;
     transform: translate(-50%, -50%);
     border-radius: 50%;
     border: 1px dashed rgba(255,69,0,0.35);
-    animation: shoe-halo-spin 24s linear infinite;
+    animation: logo-halo-spin 24s linear infinite;
     pointer-events: none;
   }
-  .shoe-halo::after {
+  .logo-halo::after {
     content: '';
     position: absolute;
     inset: 7%;
     border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.06);
   }
-  @keyframes shoe-halo-spin {
+  @keyframes logo-halo-spin {
     from { transform: translate(-50%,-50%) rotate(0deg); }
     to   { transform: translate(-50%,-50%) rotate(360deg); }
   }
-  .shoe-3d {
-    position: absolute;
-    inset: 0;
+  .logo-img {
+    position: relative;
     z-index: 2;
+    width: 74%;
+    max-width: 330px;
+    aspect-ratio: 1;
+    object-fit: contain;
+    border-radius: 14px;
+    box-shadow: 0 24px 80px -20px rgba(255,69,0,0.35);
   }
+
   .shoe-spark {
     position: absolute;
     z-index: 3;
@@ -198,11 +206,11 @@
     animation: shoe-spark-rise 3s ease-in infinite;
     pointer-events: none;
   }
-  .shoe-spark-1 { left: 16%; bottom: 22%; animation-delay: 0s; }
-  .shoe-spark-2 { left: 84%; bottom: 30%; animation-delay: 0.8s; width: 4px; height: 4px; background: #E5FF00; box-shadow: 0 0 8px rgba(229,255,0,0.9); }
-  .shoe-spark-3 { left: 74%; bottom: 14%; animation-delay: 1.6s; width: 3px; height: 3px; }
-  .shoe-spark-4 { left: 30%; bottom: 58%; animation-delay: 2.3s; width: 4px; height: 4px; background: #E5FF00; box-shadow: 0 0 8px rgba(229,255,0,0.9); }
-  .shoe-spark-5 { left: 56%; bottom: 10%; animation-delay: 1.1s; width: 3px; height: 3px; }
+  .shoe-spark-1 { left: 10%; bottom: 24%; animation-delay: 0s; }
+  .shoe-spark-2 { left: 88%; bottom: 34%; animation-delay: 0.8s; width: 4px; height: 4px; background: #E5FF00; box-shadow: 0 0 8px rgba(229,255,0,0.9); }
+  .shoe-spark-3 { left: 78%; bottom: 12%; animation-delay: 1.6s; width: 3px; height: 3px; }
+  .shoe-spark-4 { left: 24%; bottom: 62%; animation-delay: 2.3s; width: 4px; height: 4px; background: #E5FF00; box-shadow: 0 0 8px rgba(229,255,0,0.9); }
+  .shoe-spark-5 { left: 58%; bottom: 8%; animation-delay: 1.1s; width: 3px; height: 3px; }
   @keyframes shoe-spark-rise {
     0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
     15%  { opacity: 1; }

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Footprints, MapPin, Phone, Mail, Clock,
+  MapPin, Phone, Mail, Clock,
   Instagram, Facebook, Twitter, ShieldCheck, Lock, LogIn
 } from 'lucide-react';
 import { STORE_INFO } from '../data/mockData';
@@ -20,8 +20,8 @@ export default function Footer({ setActiveTab, isAdmin, onOpenSignIn }) {
           {/* Brand */}
           <div>
             <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
-              <div style={{ width:36, height:36, borderRadius:3, background:'#FF4500', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                <Footprints style={{ width:19, height:19, color:'#fff', transform:'rotate(-12deg)' }} />
+              <div style={{ width:36, height:36, borderRadius:3, overflow:'hidden', background:'#111', border:'1px solid #252525', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <img src="/aslogo.jpeg" alt="A.S Footwear logo" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
               </div>
               <span style={{ fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900, fontSize:'1.4rem', textTransform:'uppercase', color:'#F0F0F0', letterSpacing:'-0.01em' }}>
                 A.S <span style={{ color:'#FF4500' }}>FOOTWEAR</span>

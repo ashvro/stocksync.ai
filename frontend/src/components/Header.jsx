@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Footprints, Home, Package, Receipt, TrendingUp,
+  Home, Package, Receipt, TrendingUp,
   Clock, Bell, Search, Menu, X, Zap, LogOut, Bot
 } from 'lucide-react';
 
@@ -58,11 +58,12 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
             style={{ display:'flex', alignItems:'center', gap:12, background:'none', border:'none', cursor:'pointer', padding:0 }}
           >
             <div style={{
-              width:40, height:40, borderRadius:4,
-              background:'#FF4500', display:'flex', alignItems:'center', justifyContent:'center',
+              width:40, height:40, borderRadius:4, overflow:'hidden',
+              background:'#111', border:'1px solid #252525',
+              display:'flex', alignItems:'center', justifyContent:'center',
               boxShadow:'0 0 20px -4px rgba(255,69,0,0.5)',
             }}>
-              <Footprints style={{ width:22, height:22, color:'#fff', transform:'rotate(-12deg)' }} />
+              <img src="/aslogo.jpeg" alt="A.S Footwear logo" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
             </div>
             <div style={{ textAlign:'left' }}>
               <div style={{

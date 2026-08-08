@@ -3,7 +3,6 @@ import {
   ArrowRight,
   ChevronRight, Eye, X, Phone, Mail, MapPin, Clock, Send, Check, Zap
 } from 'lucide-react';
-import { STORE_INFO } from '../data/mockData';
 
 /* ────────────────────────────────────────────────────────────
    LANDING PAGE — Street Fashion Aesthetic
@@ -23,17 +22,6 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
     return String(a.id || a.sku_id).localeCompare(String(b.id || b.sku_id));
   });
 
-  // Hero is PERMANENT — a fixed showcase shoe that never changes, no matter
-  // what is added to or removed from inventory. It only feeds the 3D model's
-  // fallback image; the 3D shoe itself is always the same model.
-  const HERO_SHOE = {
-    name: 'Air Stealth Pro Runner',
-    brand: 'A.S Apex',
-    price: 149.99,
-    image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=800&q=80',
-    description: 'Handcrafted with premium lightweight mesh upper and max-cushion responsive foam.',
-  };
-
   const handleInquiry = e => {
     e.preventDefault();
     setInquirySubmitted(true);
@@ -43,7 +31,6 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
   /* ── Shared style tokens ── */
   const S = {
     card: { background:'#111', border:'1px solid #1A1A1A', borderRadius:6 },
-    cardHover: { transition:'border-color 0.2s, transform 0.2s, box-shadow 0.2s' },
     label: { fontFamily:"'Space Mono', monospace", fontSize:'0.6rem', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'#FF6A35' },
     sectionTitle: { fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900, fontSize:'clamp(1.8rem,4vw,3rem)', textTransform:'uppercase', lineHeight:0.92, color:'#F0F0F0' },
     muted: { color:'#666', fontSize:'0.8rem' },
@@ -111,13 +98,11 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
             </div>
           </div>
 
-          {/* Right — animated shoe stage */}
-          <div className="shoe-stage" style={{ display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <div className="shoe-glow" />
-            <div className="shoe-halo" />
-            <div className="shoe-3d">
-              <img src={HERO_SHOE.image} alt={HERO_SHOE.name} style={{ width:'100%', height:'100%', objectFit:'contain' }} />
-            </div>
+          {/* Right — brand logo stage */}
+          <div className="logo-stage">
+            <div className="logo-glow" />
+            <div className="logo-halo" />
+            <img src="/aslogo.jpeg" alt="A.S Footwear logo" className="logo-img" />
             <span className="shoe-spark shoe-spark-1" />
             <span className="shoe-spark shoe-spark-2" />
             <span className="shoe-spark shoe-spark-3" />
@@ -318,13 +303,13 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
         @media (max-width:900px) {
           .hero-grid     { grid-template-columns: 1fr !important; }
           .hero-card     { max-width: 100% !important; }
-          .shoe-stage    { min-height: 320px; }
+          .logo-stage    { min-height: 320px; }
           .pillars-grid  { grid-template-columns: 1fr 1fr !important; }
           .catalogue-grid{ grid-template-columns: 1fr 1fr !important; }
           .contact-grid  { grid-template-columns: 1fr !important; }
         }
         @media (max-width:600px) {
-          .shoe-stage    { min-height: 260px; }
+          .logo-stage    { min-height: 240px; }
           .pillars-grid  { grid-template-columns: 1fr !important; }
           .catalogue-grid{ grid-template-columns: 1fr !important; }
           .specs-grid    { grid-template-columns: 1fr !important; }
