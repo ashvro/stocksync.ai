@@ -85,6 +85,8 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
       <section style={{
         ...S.card,
         position:'relative', overflow:'hidden',
+        display:'flex', flexDirection:'column',
+        minHeight:'clamp(520px, 75vh, 780px)',
         marginBottom:24,
       }}>
         {/* BG diagonal stripe — subtle theme shading */}
@@ -94,13 +96,13 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
           borderLeft:'1px solid #1A1A1A', pointerEvents:'none',
         }} />
 
-        {/* Full-width video — flush to the card's top and side edges */}
-        <div style={{ position:'relative', zIndex:2 }}>
+        {/* Top half — full-bleed video, equal to text half */}
+        <div style={{ position:'relative', zIndex:2, flex:1, minHeight:0 }}>
           <div style={{
-            position:'relative', overflow:'hidden',
+            position:'absolute', inset:0, overflow:'hidden',
             borderTopLeftRadius:6, borderTopRightRadius:6,
             borderBottom:'1px solid #1A1A1A',
-            background:'#0D0D0D', aspectRatio:'16/9',
+            background:'#0D0D0D',
             boxShadow:'0 30px 70px -35px rgba(255,69,0,0.35)',
           }}>
             <HeroReel />
@@ -115,10 +117,11 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
           </div>
         </div>
 
-        {/* Headline below — unchanged */}
+        {/* Bottom half — headline, equal to video half */}
         <div style={{
-          position:'relative', zIndex:2,
-          padding:'clamp(36px,6vw,64px) clamp(20px,5vw,64px)',
+          position:'relative', zIndex:2, flex:1,
+          display:'flex', alignItems:'center', justifyContent:'center',
+          padding:'clamp(24px,4vw,48px) clamp(20px,5vw,64px)',
           textAlign:'center',
         }}>
           <h1 style={{
