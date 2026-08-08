@@ -97,7 +97,7 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
         }} />
 
         {/* Top half — full-bleed video, equal to text half */}
-        <div style={{ position:'relative', zIndex:2, flex:1, minHeight:0 }}>
+        <div style={{ position:'relative', zIndex:2, flex:0.96, minHeight:0 }}>
           <div style={{
             position:'absolute', inset:0, overflow:'hidden',
             borderTopLeftRadius:6, borderTopRightRadius:6,
@@ -119,7 +119,7 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
 
         {/* Bottom half — headline, equal to video half */}
         <div style={{
-          position:'relative', zIndex:2, flex:1,
+          position:'relative', zIndex:2, flex:1.04,
           display:'flex', alignItems:'center', justifyContent:'center',
           padding:'clamp(24px,4vw,48px) clamp(20px,5vw,64px)',
           textAlign:'center',
