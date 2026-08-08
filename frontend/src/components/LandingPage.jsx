@@ -62,10 +62,10 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
           letterSpacing:'-0.02em',
         }}>FOOTWEAR</div>
 
-        <div style={{ display:'grid', gridTemplateColumns:'1.05fr 0.95fr', gap:40, position:'relative', zIndex:2, alignItems:'center' }}
+        <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:40, position:'relative', zIndex:2, alignItems:'center' }}
           className="hero-grid">
           {/* Left */}
-          <div style={{ maxWidth:560 }}>
+          <div style={{ maxWidth:620 }}>
             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:20 }}>
               <span className="tag tag-orange">A.S FOOTWEAR</span>
               <span className="tag tag-muted">SS 2025 COLLECTION</span>
@@ -96,18 +96,6 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
                 </button>
               )}
             </div>
-          </div>
-
-          {/* Right — brand logo stage */}
-          <div className="logo-stage">
-            <div className="logo-glow" />
-            <div className="logo-halo" />
-            <img src="/aslogo.jpeg" alt="A.S Footwear logo" className="logo-img" />
-            <span className="shoe-spark shoe-spark-1" />
-            <span className="shoe-spark shoe-spark-2" />
-            <span className="shoe-spark shoe-spark-3" />
-            <span className="shoe-spark shoe-spark-4" />
-            <span className="shoe-spark shoe-spark-5" />
           </div>
         </div>
       </section>
@@ -303,13 +291,11 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
         @media (max-width:900px) {
           .hero-grid     { grid-template-columns: 1fr !important; }
           .hero-card     { max-width: 100% !important; }
-          .logo-stage    { min-height: 320px; }
           .pillars-grid  { grid-template-columns: 1fr 1fr !important; }
           .catalogue-grid{ grid-template-columns: 1fr 1fr !important; }
           .contact-grid  { grid-template-columns: 1fr !important; }
         }
         @media (max-width:600px) {
-          .logo-stage    { min-height: 240px; }
           .pillars-grid  { grid-template-columns: 1fr !important; }
           .catalogue-grid{ grid-template-columns: 1fr !important; }
           .specs-grid    { grid-template-columns: 1fr !important; }
