@@ -55,34 +55,36 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
           {/* Logo */}
           <button
             onClick={() => setActiveTab('landing')}
-            style={{ display:'flex', alignItems:'center', gap:12, background:'none', border:'none', cursor:'pointer', padding:0 }}
+            style={{ display:'flex', alignItems:'center', gap:12, background:'none', border:'none', cursor:'pointer', padding:0, flexShrink:0, whiteSpace:'nowrap' }}
           >
             <div style={{
               width:40, height:40, borderRadius:4, overflow:'hidden',
               background:'#111', border:'1px solid #252525',
               display:'flex', alignItems:'center', justifyContent:'center',
               boxShadow:'0 0 20px -4px rgba(255,69,0,0.5)',
+              flexShrink:0,
             }}>
-              <img src="/aslogo.jpeg" alt="A.S Footwear logo" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+              <img src="/aslogo.jpeg" alt="A.S Footwear logo" style={{ width:40, height:40, objectFit:'cover', display:'block' }} />
             </div>
-            <div style={{ textAlign:'left' }}>
+            <div style={{ textAlign:'left', flexShrink:0 }}>
               <div style={{
                 fontFamily:"'Barlow Condensed', sans-serif",
                 fontSize: '1.5rem', fontWeight: 900, color:'#F0F0F0',
                 letterSpacing:'-0.01em', lineHeight:1,
-                textTransform:'uppercase',
+                textTransform:'uppercase', whiteSpace:'nowrap',
               }}>
                 A.S <span style={{ color:'#FF4500' }}>FOOTWEAR</span>
               </div>
-              <div style={{
+              <div className="header-subtitle" style={{
                 fontFamily:"'Space Mono', monospace", fontSize:'0.55rem',
                 color:'#555', letterSpacing:'0.12em', textTransform:'uppercase', marginTop:2,
+                whiteSpace:'nowrap',
               }}>Premium · Store System</div>
             </div>
           </button>
 
           {/* Desktop nav */}
-          <nav style={{ display:'flex', alignItems:'center', gap:2 }} className="hidden-mobile">
+          <nav style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:2, flex:1, minWidth:0, overflowX:'auto', overflowY:'hidden', scrollbarWidth:'none', msOverflowStyle:'none' }} className="hidden-mobile header-nav">
             {visibleTabs.map(tab => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
@@ -92,14 +94,15 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
                   onClick={() => setActiveTab(tab.id)}
                   style={{
                     position:'relative', display:'flex', alignItems:'center', gap:6,
-                    padding:'7px 14px', borderRadius:3, border:'none', cursor:'pointer',
+                    padding:'7px 12px', borderRadius:3, border:'none', cursor:'pointer',
                     fontFamily:"'Space Grotesk', sans-serif",
                     fontWeight: active ? 700 : 500,
-                    fontSize:'0.75rem',
+                    fontSize:'0.74rem',
                     letterSpacing:'0.04em', textTransform:'uppercase',
                     background: active ? '#FF4500' : 'transparent',
                     color: active ? '#fff' : '#888',
                     transition:'all 0.15s',
+                    flexShrink:0, whiteSpace:'nowrap',
                   }}
                   onMouseEnter={e => { if (!active) { e.currentTarget.style.color='#F0F0F0'; e.currentTarget.style.background='rgba(255,255,255,0.05)'; }}}
                   onMouseLeave={e => { if (!active) { e.currentTarget.style.color='#888'; e.currentTarget.style.background='transparent'; }}}
@@ -124,10 +127,10 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
           </nav>
 
           {/* Right actions */}
-          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, flexShrink:0 }}>
             {/* Search (admin only) */}
             {isAdmin && (
-              <div style={{ position:'relative' }} className="hidden-mobile">
+              <div style={{ position:'relative' }} className="hidden-mobile header-search">
                 <Search style={{ width:14, height:14, position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', color:'#555' }} />
                 <input
                   type="text"
@@ -149,10 +152,10 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
                 <button
                   onClick={() => onQuickInvoice ? onQuickInvoice() : setActiveTab('invoice')}
                   className="btn-primary"
-                  style={{ padding:'8px 16px' }}
+                  style={{ padding:'8px 14px', flexShrink:0, whiteSpace:'nowrap' }}
                 >
-                  <Zap style={{ width:13, height:13 }} />
-                  New Invoice
+                  <Zap style={{ width:13, height:13, flexShrink:0 }} />
+                  <span className="header-invoice-label">New Invoice</span>
                 </button>
                 <button
                   onClick={onLogout}
@@ -227,9 +230,19 @@ export default function Header({ activeTab, setActiveTab, alertCount, searchQuer
       )}
 
       <style>{`
+        .header-nav::-webkit-scrollbar { display: none; }
+
+        @media (max-width: 1220px) {
+          .header-search  { display: none !important; }
+          .header-subtitle { display: none !important; }
+        }
+        @media (max-width: 1020px) {
+          .header-invoice-label { display: none !important; }
+        }
         @media (max-width: 900px) {
           .hidden-mobile { display: none !important; }
           .mobile-menu-btn { display: flex !important; }
+          .header-subtitle { display: block !important; }
         }
         @media (max-width: 640px) {
           .mobile-nav-drawer { grid-template-columns: 1fr 1fr; }
