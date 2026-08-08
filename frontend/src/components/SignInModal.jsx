@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Lock, User, LogIn, ShieldCheck } from 'lucide-react';
-import { loginAdmin, syncAdminToken } from '../services/auth';
+import { loginAdmin } from '../services/auth';
 
 const S = {
   input: { width:'100%', padding:'10px 12px 10px 34px', fontSize:'0.8rem', borderRadius:3, background:'#0D0D0D', border:'1px solid #252525', color:'#F0F0F0', fontFamily:"'Space Grotesk', sans-serif" },
@@ -14,13 +14,12 @@ export default function SignInModal({ open, onClose, onLogin }) {
 
   if (!open) return null;
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    if (loginAdmin(username.trim(), password)) {
-      syncAdminToken(username.trim(), password);
+    setError('');
+    if (await loginAdmin(username.trim(), password)) {
       setUsername('');
       setPassword('');
-      setError('');
       onLogin();
       onClose();
     } else {
