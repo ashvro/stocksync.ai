@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight,
   ChevronRight, Eye, X, Phone, Mail, MapPin, Clock, Send, Check, Zap
@@ -7,6 +7,49 @@ import {
 /* ────────────────────────────────────────────────────────────
    LANDING PAGE — Street Fashion Aesthetic
    ──────────────────────────────────────────────────────────── */
+/* ── Ad-style crossfade reel ─────────────────────────────
+   Plays clip 1 (man tightening his sneakers before running)
+   then fades into clip 2 (runner in the city) and loops.
+   Muted + no controls, so it runs like an ad background. */
+const HERO_CLIPS = [
+  { src: 'https://assets.mixkit.co/videos/15059/15059-720.mp4', label: 'TIE THE FIT' },
+  { src: 'https://assets.mixkit.co/videos/608/608-720.mp4', label: 'RUN THE CITY' },
+];
+
+function HeroReel() {
+  const [active, setActive] = useState(0);
+  const videoRefs = [useRef(null), useRef(null)];
+
+  useEffect(() => {
+    videoRefs.forEach((ref, i) => {
+      const v = ref.current;
+      if (!v) return;
+      if (i === active) v.play().catch(() => {});
+      else { v.pause(); v.currentTime = 0; }
+    });
+  }, [active]);
+
+  return (
+    <>
+      {HERO_CLIPS.map((clip, i) => (
+        <video
+          key={clip.src}
+          ref={videoRefs[i]}
+          src={clip.src}
+          muted playsInline loop={false} preload="auto"
+          onEnded={() => setActive(a => (a + 1) % HERO_CLIPS.length)}
+          style={{
+            position:'absolute', inset:0, width:'100%', height:'100%',
+            objectFit:'cover', display:'block', pointerEvents:'none',
+            opacity: active === i ? 1 : 0,
+            transition:'opacity 0.9s ease',
+          }}
+        />
+      ))}
+    </>
+  );
+}
+
 export default function LandingPage({ inventory, setActiveTab, onSelectShoeForInvoice, isAdmin }) {
   const [selectedShoe, setSelectedShoe] = useState(null);
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
@@ -106,12 +149,7 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
               height:'100%', minHeight:360,
               boxShadow:'0 30px 70px -35px rgba(255,69,0,0.35)',
             }}>
-              <video
-                autoPlay muted loop playsInline
-                preload="auto"
-                src="https://assets.mixkit.co/videos/4851/4851-720.mp4"
-                style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
-              />
+              <HeroReel />
               <div style={{
                 position:'absolute', inset:0, pointerEvents:'none',
                 background:'linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.6) 100%)',
