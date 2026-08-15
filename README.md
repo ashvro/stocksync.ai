@@ -34,7 +34,7 @@ The result: the business runs faster, decisions are based on real data, and the 
 | Layer    | Tech |
 |----------|------|
 | Frontend | React 19, Vite 6, Tailwind CSS, Three.js (3D viewer), jsPDF (invoices) |
-| Backend  | Django, Django REST Framework, PostgreSQL (prod) / SQLite (dev), CORS headers |
+| Backend  | Django, Django REST Framework, SQLite, CORS headers |
 | AI       | Groq API (`llama-3.1-8b-instant`) |
 
 ## 📁 Project Structure
@@ -150,26 +150,65 @@ Mutating requests must send `Authorization: Bearer <token>`, obtained from `/api
 
 ## 🌐 Deployment
 
-### 1. Backend → Render (managed PostgreSQL — data persists)
+### 1. Backend → PythonAnywhere (free, permanent)
 
-The blueprint at `backend/render.yaml` provisions a **managed PostgreSQL database** alongside the web service, so inventory and orders added by an admin survive restarts and redeploys — normal users always read the same live data via the API.
+PythonAnywhere is the **free + permanent** home for this app: web apps stay up 24/7 (no idle spin-down), and the SQLite file persists on disk — so inventory and orders added by an admin survive restarts and normal users always read the same live data via the API.
 
-1. Push the repo to GitHub, then in Render: **New → Blueprint →** select the repo. Render auto-detects `backend/render.yaml` and creates `asfootwear-api` + `asfootwear-db` (Postgres).
-2. In the Render dashboard, set the environment variables that need real values:
-   - `ADMIN_PASSWORD` — a strong staff-login password
-   - `DJANGO_SECRET_KEY` — auto-generated, or set your own
-   - `GROQ_API_KEY` — from [console.groq.com](https://console.groq.com) (sync: `false`, so you must set it)
-3. Deploy. `preDeployCommand` runs `python manage.py migrate` automatically, so the database schema is created on first deploy and kept up to date.
-4. Your API is live at `https://asfootwear-api.onrender.com/api` (adjust the name if you changed it).
+1. **Create an account** at [pythonanywhere.com](https://www.pythonanywhere.com) (free). Your site URL is `https://<username>.pythonanywhere.com`.
+2. **Web tab → Add a new web app → Manual configuration → Python 3.12.** Leave defaults; you'll edit the WSGI file next.
+3. **Consoles tab → Bash**, then clone and install:
 
-> Local development still uses SQLite (`backend/db.sqlite3`). When `DATABASE_URL` is set (Render injects it), Django automatically uses PostgreSQL instead.
+   ```bash
+   cd ~
+   git clone https://github.com/ashvro/stocksync.ai.git ASfootwear
+   cd ASfootwear/backend
+   python3.12 -m venv venv
+   source venv/bin/activate
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+
+4. Create `backend/.env` with production values (the app auto-reads it):
+
+   ```env
+   DJANGO_SECRET_KEY=<long-random-string>
+   DJANGO_DEBUG=False
+   DJANGO_ALLOWED_HOSTS=<username>.pythonanywhere.com
+   ADMIN_PASSWORD=<strong-password>
+   GROQ_API_KEY=gsk_your_key_here
+   GROQ_MODEL=llama-3.1-8b-instant
+   ```
+
+5. **Web tab → Code → WSGI configuration file** — replace the contents with:
+
+   ```python
+   import os, sys
+   project = '/home/<username>/ASfootwear/backend'
+   if project not in sys.path:
+       sys.path.insert(0, project)
+   os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+   from django.core.wsgi import get_wsgi_application
+   application = get_wsgi_application()
+   ```
+
+   Then under **Virtualenv** enter `/home/<username>/ASfootwear/backend/venv`.
+
+6. Back in the Bash console, migrate + seed:
+
+   ```bash
+   source venv/bin/activate
+   python manage.py migrate
+   python manage.py seed_data
+   ```
+
+7. **Web tab → Reload**. Your API is live at `https://<username>.pythonanywhere.com/api` with HTTPS (enable **Force HTTPS** under the HTTPS section).
 
 ### 2. Frontend → Netlify
 
 1. In the Netlify site **Site configuration → Environment variables**, add:
 
    ```
-   VITE_API_URL=https://asfootwear-api.onrender.com/api
+   VITE_API_URL=https://<username>.pythonanywhere.com/api
    ```
 
 2. Trigger a redeploy (**Deploys → Trigger deploy → Clear cache and deploy site**). The new value is baked into the build.
@@ -181,7 +220,7 @@ The blueprint at `backend/render.yaml` provisions a **managed PostgreSQL databas
 
 ### Domain
 
-- Point a custom domain (e.g. `.in` via BigRock / GoDaddy / Hostinger) at Netlify; set `DJANGO_ALLOWED_HOSTS` to your API domain (`asfootwear-api.onrender.com`).
+- Point a custom domain (e.g. `.in` via BigRock / GoDaddy / Hostinger) at Netlify; set `DJANGO_ALLOWED_HOSTS` to your API domain (`<username>.pythonanywhere.com`).
 
 ## 📄 License
 
