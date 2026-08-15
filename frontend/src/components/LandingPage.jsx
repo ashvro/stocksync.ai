@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  ChevronRight, Eye, X, Phone, Mail, MapPin, Clock, Send, Check, Zap
+  ChevronRight, ChevronDown, Eye, X, Phone, Mail, MapPin, Clock, Send, Check, Zap, ShoppingBag
 } from 'lucide-react';
 
 /* ────────────────────────────────────────────────────────────
@@ -11,8 +11,8 @@ import {
    then fades into clip 2 (runner in the city) and loops.
    Muted + no controls, so it runs like an ad background. */
 const HERO_CLIPS = [
-  { src: 'https://assets.mixkit.co/videos/15059/15059-720.mp4', label: 'TIE THE FIT' },
-  { src: 'https://assets.mixkit.co/videos/608/608-720.mp4', label: 'RUN THE CITY' },
+  { src: 'https://assets.mixkit.co/videos/15059/15059-720.mp4', label: 'TIE THE FIT', poster: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=1200&h=800&q=70' },
+  { src: 'https://assets.mixkit.co/videos/608/608-720.mp4', label: 'RUN THE CITY', poster: 'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=1200&h=800&q=70' },
 ];
 
 function HeroReel() {
@@ -35,6 +35,7 @@ function HeroReel() {
           key={clip.src}
           ref={videoRefs[i]}
           src={clip.src}
+          poster={clip.poster}
           muted playsInline loop={false} preload="auto"
           onEnded={() => setActive(a => (a + 1) % HERO_CLIPS.length)}
           style={{
@@ -49,7 +50,7 @@ function HeroReel() {
   );
 }
 
-export default function LandingPage({ inventory, setActiveTab, onSelectShoeForInvoice, isAdmin }) {
+export default function LandingPage({ inventory, setActiveTab, onSelectShoeForInvoice, isAdmin, onOpenSignIn }) {
   const [selectedShoe, setSelectedShoe] = useState(null);
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -81,30 +82,35 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
   return (
     <div style={{ paddingTop:32, paddingBottom:80 }}>
 
-      {/* ════ HERO ════ */}
+      {/* ════ HERO — full-bleed, no card ════ */}
       <section style={{
-        ...S.card,
         position:'relative', overflow:'hidden',
+        width:'100vw', marginLeft:'calc(50% - 50vw)',
         display:'flex', flexDirection:'column',
-        minHeight:'clamp(520px, 75vh, 780px)',
+        minHeight:'clamp(560px, 92vh, 980px)',
         marginBottom:24,
       }}>
-        {/* BG diagonal stripe — subtle theme shading */}
-        <div style={{
-          position:'absolute', top:0, right:0, width:'45%', height:'100%',
-          background:'linear-gradient(135deg, transparent 0%, rgba(255,69,0,0.04) 100%)',
-          borderLeft:'1px solid #1A1A1A', pointerEvents:'none',
-        }} />
 
-        {/* Top half — full-bleed video, equal to text half */}
-        <div style={{ position:'relative', zIndex:2, flex:0.96, minHeight:0 }}>
+        {/* Top half — full-bleed video, spills down over the headline zone */}
+        <div style={{ position:'relative', zIndex:2, flex:3.5, minHeight:0 }}>
           <div style={{
             position:'absolute', inset:0, overflow:'hidden',
-            borderTopLeftRadius:6, borderTopRightRadius:6,
             borderBottom:'1px solid #1A1A1A',
             background:'#0D0D0D',
             boxShadow:'0 30px 70px -35px rgba(255,69,0,0.35)',
           }}>
+            {/* Fallback poster + gradient: shows while videos load / if they're blocked */}
+            <div style={{
+              position:'absolute', inset:0,
+              background:'linear-gradient(135deg, #0D0D0D 0%, #1A0E07 60%, #2B1207 100%)',
+            }}>
+              <img
+                src={HERO_CLIPS[0].poster}
+                alt=""
+                aria-hidden="true"
+                style={{ width:'100%', height:'100%', objectFit:'cover', opacity:0.5 }}
+              />
+            </div>
             <HeroReel />
             <div style={{
               position:'absolute', inset:0, pointerEvents:'none',
@@ -117,13 +123,24 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
           </div>
         </div>
 
-        {/* Bottom half — headline, equal to video half */}
+        {/* Bottom half — headline at the very bottom, video spills past it */}
         <div style={{
-          position:'relative', zIndex:2, flex:1.04,
-          display:'flex', alignItems:'center', justifyContent:'center',
-          padding:'clamp(24px,4vw,48px) clamp(20px,5vw,64px)',
+          position:'relative', zIndex:2, flex:1,
+          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-end',
+          padding:'0 clamp(20px,5vw,64px) clamp(24px,3.5vw,48px)',
           textAlign:'center',
         }}>
+          {/* Giant background brand word */}
+          <div aria-hidden="true" style={{
+            position:'absolute', bottom:-6, left:'50%', transform:'translateX(-50%)',
+            fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900,
+            fontSize:'clamp(7rem,22vw,20rem)', lineHeight:0.8,
+            color:'rgba(255,255,255,0.035)', textTransform:'uppercase',
+            letterSpacing:'-0.02em', whiteSpace:'nowrap', pointerEvents:'none', userSelect:'none',
+          }}>
+            EST 2012
+          </div>
+
           <h1 style={{
             fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900,
             fontSize:'clamp(3rem,7.5vw,6.5rem)', textTransform:'uppercase',
@@ -132,6 +149,45 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
             Crafted for<br />
             <span style={{ color:'#FF4500' }}>the Street.</span>
           </h1>
+
+          {/* Sub-tagline */}
+          <p style={{
+            fontFamily:"'Space Mono', monospace",
+            fontSize:'clamp(0.6rem,1.5vw,0.78rem)',
+            letterSpacing:'0.16em', textTransform:'uppercase',
+            color:'#888', marginTop:16,
+          }}>
+            <span style={{ color:'#FF6A35' }}>//</span> Premium Street Footwear — Engineered in Bengaluru Since 2012
+          </p>
+
+          {/* CTAs */}
+          <div style={{ display:'flex', gap:12, marginTop:26, flexWrap:'wrap', justifyContent:'center' }}>
+            <button
+              className="btn-primary"
+              onClick={() => document.getElementById('catalogue')?.scrollIntoView({ behavior:'smooth' })}
+            >
+              <ShoppingBag style={{ width:13, height:13 }} /> Explore Collection
+            </button>
+          </div>
+
+          {/* Mini stats row */}
+          <div style={{ display:'flex', gap:'clamp(18px,4vw,48px)', marginTop:30, justifyContent:'center', flexWrap:'wrap' }}>
+            {[
+              { v: '4.9★', l: 'Avg Rating' },
+              { v: '2012', l: 'Established' },
+            ].map(s => (
+              <div key={s.l} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:2 }}>
+                <span style={{ fontFamily:"'Barlow Condensed', sans-serif", fontWeight:900, fontSize:'clamp(1.4rem,3vw,2.2rem)', color:'#F0F0F0', lineHeight:1 }}>{s.v}</span>
+                <span style={{ fontFamily:"'Space Mono', monospace", fontSize:'0.55rem', letterSpacing:'0.14em', textTransform:'uppercase', color:'#666' }}>{s.l}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Scroll indicator */}
+          <div style={{ marginTop:22, display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
+            <span style={{ fontFamily:"'Space Mono', monospace", fontSize:'0.55rem', letterSpacing:'0.22em', textTransform:'uppercase', color:'#555' }}>Scroll</span>
+            <ChevronDown style={{ width:14, height:14, color:'#FF6A35' }} className="animate-scroll-bounce" />
+          </div>
         </div>
       </section>
 
@@ -323,6 +379,12 @@ export default function LandingPage({ inventory, setActiveTab, onSelectShoeForIn
 
       {/* ── Responsive grid overrides ── */}
       <style>{`
+        @keyframes scroll-bounce {
+          0%, 100% { transform: translateY(0); opacity: 0.5; }
+          50%      { transform: translateY(5px);  opacity: 1; }
+        }
+        .animate-scroll-bounce { animation: scroll-bounce 1.6s ease-in-out infinite; }
+
         @media (max-width:900px) {
           .pillars-grid  { grid-template-columns: 1fr 1fr !important; }
           .catalogue-grid{ grid-template-columns: 1fr 1fr !important; }

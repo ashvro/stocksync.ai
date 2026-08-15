@@ -80,19 +80,16 @@ const orderPayload = (o) => ({
 });
 
 /* Push the admin's local store into the Django backend so the two
-   never disagree: backend items/orders that were deleted locally are
-   removed, and local additions/edits are written through. */
+   never disagree: local additions/edits are written through. This is
+   deliberately additive — items the backend has but this device's local
+   cache doesn't are NEVER deleted, so a stale or fresh device can't wipe
+   stock that other staff uploaded. Deletions still propagate via the
+   individual handleDeleteShoe / handleDeleteOrder API calls. */
 const reconcileWithBackend = async (localInventory, localOrders) => {
   const [apiInventory, apiOrders] = await Promise.all([fetchInventory(), fetchOrders()]);
 
   const backendSkus = new Set(apiInventory.map(i => i.sku_id));
-  const localSkus = new Set(localInventory.map(i => i.sku_id || i.id));
 
-  for (const b of apiInventory) {
-    if (!localSkus.has(b.sku_id)) {
-      try { await deleteFootwear(b.sku_id); } catch (e) { console.warn('reconcile delete inventory:', e); }
-    }
-  }
   for (const item of localInventory) {
     const sku = item.sku_id || item.id;
     try {
@@ -102,13 +99,7 @@ const reconcileWithBackend = async (localInventory, localOrders) => {
   }
 
   const backendIds = new Set(apiOrders.map(o => o.invoice_id));
-  const localIds = new Set(localOrders.map(o => o.id || o.invoice_id));
 
-  for (const b of apiOrders) {
-    if (!localIds.has(b.invoice_id)) {
-      try { await deleteOrder(b.invoice_id); } catch (e) { console.warn('reconcile delete order:', e); }
-    }
-  }
   for (const o of localOrders) {
     const id = o.id || o.invoice_id;
     try {

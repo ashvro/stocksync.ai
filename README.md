@@ -34,8 +34,8 @@ The result: the business runs faster, decisions are based on real data, and the 
 | Layer    | Tech |
 |----------|------|
 | Frontend | React 19, Vite 6, Tailwind CSS, Three.js (3D viewer), jsPDF (invoices) |
-| Backend  | Django, Django REST Framework, SQLite, CORS headers |
-| AI       | Groq API (`llama-3.3-70b-versatile`) |
+| Backend  | Django, Django REST Framework, PostgreSQL (prod) / SQLite (dev), CORS headers |
+| AI       | Groq API (`llama-3.1-8b-instant`) |
 
 ## 📁 Project Structure
 
@@ -88,7 +88,7 @@ ASbot needs a Groq API key. Create one at [console.groq.com](https://console.gro
 
 ```env
 GROQ_API_KEY=gsk_your_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_MODEL=llama-3.1-8b-instant
 ```
 
 Without a key, ASbot automatically falls back to an offline mode that answers simple stock / order questions locally.
@@ -110,7 +110,7 @@ DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=12345
 GROQ_API_KEY=
-GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_MODEL=llama-3.1-8b-instant
 ```
 
 > Set `DJANGO_DEBUG=False` and a strong `DJANGO_SECRET_KEY` / `ADMIN_PASSWORD` in production.
@@ -150,69 +150,26 @@ Mutating requests must send `Authorization: Bearer <token>`, obtained from `/api
 
 ## 🌐 Deployment
 
-### 1. Backend → PythonAnywhere (free, permanent — recommended)
+### 1. Backend → Render (managed PostgreSQL — data persists)
 
-PythonAnywhere is the best **free + permanent** home for this app: web apps stay up 24/7 (no idle spin-down), and the SQLite file persists — no ephemeral-filesystem data loss like on Render's free tier.
+The blueprint at `backend/render.yaml` provisions a **managed PostgreSQL database** alongside the web service, so inventory and orders added by an admin survive restarts and redeploys — normal users always read the same live data via the API.
 
-1. **Create an account** at [pythonanywhere.com](https://www.pythonanywhere.com) (free). Your site URL is `https://<username>.pythonanywhere.com`.
-2. **Web tab → Add a new web app → Manual configuration → Python 3.12.** Leave defaults; you'll edit the WSGI file next.
-3. **Consoles tab → Bash**, then upload the code and install:
+1. Push the repo to GitHub, then in Render: **New → Blueprint →** select the repo. Render auto-detects `backend/render.yaml` and creates `asfootwear-api` + `asfootwear-db` (Postgres).
+2. In the Render dashboard, set the environment variables that need real values:
+   - `ADMIN_PASSWORD` — a strong staff-login password
+   - `DJANGO_SECRET_KEY` — auto-generated, or set your own
+   - `GROQ_API_KEY` — from [console.groq.com](https://console.groq.com) (sync: `false`, so you must set it)
+3. Deploy. `preDeployCommand` runs `python manage.py migrate` automatically, so the database schema is created on first deploy and kept up to date.
+4. Your API is live at `https://asfootwear-api.onrender.com/api` (adjust the name if you changed it).
 
-   ```bash
-   cd ~
-   git clone https://github.com/<your-github>/ASfootwear.git
-   cd ASfootwear/backend
-   python3.12 -m venv venv
-   source venv/bin/activate
-   pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
+> Local development still uses SQLite (`backend/db.sqlite3`). When `DATABASE_URL` is set (Render injects it), Django automatically uses PostgreSQL instead.
 
-4. Create `backend/.env` with production values (the app auto-reads it):
-
-   ```env
-   DJANGO_SECRET_KEY=<long-random-string>
-   DJANGO_DEBUG=False
-   DJANGO_ALLOWED_HOSTS=your-username.pythonanywhere.com
-   ADMIN_PASSWORD=<strong-password>
-   GROQ_API_KEY=gsk_your_key_here
-   GROQ_MODEL=llama-3.3-70b-versatile
-   ```
-
-5. **Web tab → Code → WSGI configuration file** — replace the contents with:
-
-   ```python
-   import os, sys
-   project = '/home/<username>/ASfootwear/backend'
-   if project not in sys.path:
-       sys.path.insert(0, project)
-   os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
-   from django.core.wsgi import get_wsgi_application
-   application = get_wsgi_application()
-   ```
-
-   Then under **Virtualenv** enter `/home/<username>/ASfootwear/backend/venv`.
-
-6. **Static files** (for Django admin assets): add a mapping **URL** `/static/` → **Directory** `/home/<username>/ASfootwear/backend/staticfiles/`.
-7. Back in the Bash console, migrate + seed + collect static:
-
-   ```bash
-   source venv/bin/activate
-   python manage.py migrate
-   python manage.py seed_data
-   python manage.py collectstatic --noinput
-   ```
-
-8. **Web tab → Reload**. Your API is live at `https://<username>.pythonanywhere.com/api` with HTTPS (enable **Force HTTPS** under the HTTPS section).
-
-> **Alternative (Render free):** Render auto-detects `backend/render.yaml` (New → Blueprint). Note the free tier **sleeps when idle** and its filesystem is ephemeral — SQLite data is lost on restart, so it's only suitable for demos.
-
-### 2. Frontend → Netlify (already deployed)
+### 2. Frontend → Netlify
 
 1. In the Netlify site **Site configuration → Environment variables**, add:
 
    ```
-   VITE_API_URL=https://<username>.pythonanywhere.com/api
+   VITE_API_URL=https://asfootwear-api.onrender.com/api
    ```
 
 2. Trigger a redeploy (**Deploys → Trigger deploy → Clear cache and deploy site**). The new value is baked into the build.
@@ -224,7 +181,7 @@ PythonAnywhere is the best **free + permanent** home for this app: web apps stay
 
 ### Domain
 
-- Point a custom domain (e.g. `.in` via BigRock / GoDaddy / Hostinger) at Netlify; set `DJANGO_ALLOWED_HOSTS` to your API domain (`<username>.pythonanywhere.com`).
+- Point a custom domain (e.g. `.in` via BigRock / GoDaddy / Hostinger) at Netlify; set `DJANGO_ALLOWED_HOSTS` to your API domain (`asfootwear-api.onrender.com`).
 
 ## 📄 License
 
