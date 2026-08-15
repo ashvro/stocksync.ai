@@ -129,31 +129,61 @@ export default function App() {
   }, [inventory, orderHistory, isAdmin]);
 
   // Load Inventory & Orders from Django REST API on mount
-  const loadDataFromBackend = async () => {
-    setLoading(true);
+  const loadDataFromBackend = async ({ silent = false } = {}) => {
+    if (!silent) setLoading(true);
     const local = loadLocalData();
     const admin = isAdminLoggedIn();
     try {
-      const [apiInventory, apiOrders] = await Promise.all([fetchInventory(), fetchOrders()]);
+      let [apiInventory, apiOrders] = await Promise.all([fetchInventory(), fetchOrders()]);
 
       if (admin && local.inventory && local.orders) {
         // Admin's saved store is authoritative — bring the backend up to date
         await reconcileWithBackend(local.inventory, local.orders);
-      } else {
-        // Normal user or first-ever run — backend is the shared source of truth
-        setInventory(apiInventory);
-        setOrderHistory(apiOrders);
-        if (admin) persistData(apiInventory, apiOrders);
+        // Re-read so this device also sees items/orders added by other devices
+        [apiInventory, apiOrders] = await Promise.all([fetchInventory(), fetchOrders()]);
       }
+
+      // The backend is the shared source of truth for EVERYONE (admin & normal
+      // users), so changes made on any device show up everywhere.
+      setInventory(apiInventory);
+      setOrderHistory(apiOrders);
+      if (admin) persistData(apiInventory, apiOrders);
     } catch (err) {
       console.warn("Could not reach Django API, using saved local data:", err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     loadDataFromBackend();
+  }, []);
+
+  // Live sync: keep the page showing the latest backend data without a manual
+  // reload — refetch whenever the tab regains focus and every 45s while open.
+  const refreshFromBackend = async () => {
+    try {
+      const [apiInventory, apiOrders] = await Promise.all([fetchInventory(), fetchOrders()]);
+      setInventory(apiInventory);
+      setOrderHistory(apiOrders);
+      if (isAdminLoggedIn()) persistData(apiInventory, apiOrders);
+    } catch (err) {
+      console.warn("Live refresh failed (offline?), keeping current data:", err);
+    }
+  };
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (!document.hidden) refreshFromBackend();
+    };
+    window.addEventListener('focus', onVisible);
+    document.addEventListener('visibilitychange', onVisible);
+    const interval = setInterval(refreshFromBackend, 45000);
+    return () => {
+      window.removeEventListener('focus', onVisible);
+      document.removeEventListener('visibilitychange', onVisible);
+      clearInterval(interval);
+    };
   }, []);
 
   // Alert Count Calculation
